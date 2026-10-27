@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ayan and Friends — ICT School Project</title>
+  <meta name="description" content="Ayan and Friends — an ICT school project. A Swiss-style website built by hand with HTML and CSS.">
+
+  <style>
+    /* ============================================================
+       TOKENS
+       ============================================================ */
+    :root {
+      --bg: #f4f3ef;
+      --ink: #111110;
+      --body: #3a3a36;
+      --muted: #83837c;
+      --red: #e3350d;
+      --line: #d9d7cf;
+
+      --sans: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+      --pad: clamp(1.1rem, 5vw, 3.5rem);
+      --ease: cubic-bezier(.2, .7, .2, 1);
+    }
+
+    /* ============================================================
+       RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 5.5rem;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a, button {
+      color: inherit;
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    h1, h2, h3, p, ul, ol { margin: 0; }
+
+    /* ============================================================
+       TOP BAR
+       ============================================================ */
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 40;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      padding: .95rem var(--pad);
+      background: rgba(244, 243, 239, .88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .clickable {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: color .2s var(--ease);
+    }
+
+    .clickable:hover,
+    .clickable:focus-visible {
+      color: var(--red);
+      outline: none;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: .95rem;
+      letter-spacing: -.015em;
+    }
+
+    .brand span { color: var(--red); }
+
+    .topbar .center {
+      justify-self: center;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .topbar nav {
+      justify-self: end;
+      display: flex;
+      gap: clamp(.8rem, 2.2vw, 1.8rem);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+    }
+
+    .topbar nav .clickable {
+      color: var(--muted);
+      padding: .2rem 0;
+      border-bottom: 1px solid transparent;
+    }
+
+    .topbar nav .clickable:hover,
+    .topbar nav .clickable:focus-visible {
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    /* ============================================================
+       LAYOUT
+       ============================================================ */
+    .wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+
+    section { scroll-margin-top: 5.5rem; }
+
+    .section {
+      padding: clamp(3rem, 7vw, 5.5rem) 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: clamp(1.8rem, 4vw, 3rem);
+    }
+
+    .label {
+      display: flex;
+      gap: .8rem;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--muted);
+    }
+
+    .label b {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .section-note {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       HERO
+       ============================================================ */
+    .hero {
+      padding-top: clamp(7rem, 14vw, 10rem);
+      padding-bottom: clamp(2.5rem, 6vw, 4rem);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--muted);
+      opacity: 0;
+      animation: fade .8s var(--ease) .05s forwards;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      background: var(--red);
+    }
+
+    .hero h1 {
+      margin-top: clamp(1rem, 2.5vw, 1.8rem);
+      font-size: clamp(3rem, 13.5vw, 12rem);
+      line-height: .86;
+      letter-spacing: -.045em;
+      font-weight: 700;
+    }
+
+    .hero h1 span { display: block; }
+    .hero h1 .accent { color: var(--red); }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: clamp(2.5rem, 7vw, 4.5rem);
+      opacity: 0;
+      animation: fade .8s var(--ease) .35s forwards;
+    }
+
+    .cell {
+      padding: .85rem 1.1rem 0 0;
+      border-top: 1px solid var(--ink);
+    }
+
+    .cell dt {
+      font-size: .66rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--muted);
+      margin-bottom: .45rem;
+    }
+
+    .cell dd {
+      margin: 0;
+      font-size: .95rem;
+      letter-spacing: -.01em;
+    }
+
+    .cell dd.red {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* ============================================================
+       ABOUT
+       ============================================================ */
+    .statement {
+      font-size: clamp(1.5rem, 3.8vw, 2.9rem);
+      line-height: 1.1;
+      letter-spacing: -.025em;
+      font-weight: 700;
+      max-width: 22ch;
+    }
+
+    .statement .accent { color: var(--red); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(1.5rem, 4vw, 3rem);
+      margin-top: clamp(2rem, 5vw, 3.2rem);
+    }
+
+    .about-grid p {
+      max-width: 46ch;
+      font-size: 1rem;
+      line-height: 1.62;
+      color: var(--body);
+    }
+
+    .about-grid p strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       BRIEF
+       ============================================================ */
+    .criteria {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .criteria li {
+      display: grid;
+      grid-template-columns: 3.2rem 1fr;
+      gap: 1rem;
+      align-items: baseline;
+      padding: clamp(.85rem, 1.8vw, 1.15rem) .2rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .criteria b {
+      font-size: .7rem;
+      letter-spacing: .12em;
+      color: var(--red);
+    }
+
+    .criteria div {
+      max-width: 64ch;
+      font-size: .98rem;
+      line-height: 1.58;
+      color: var(--body);
+    }
+
+    .criteria strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       WORK
+       ============================================================ */
+    .work { border-bottom: 1px solid var(--line); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 3.2rem 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: clamp(.9rem, 2vw, 1.3rem) .7rem;
+      border-top: 1px solid var(--line);
+      transition: background .22s var(--ease), color .22s var(--ease), padding-left .22s var(--ease);
+    }
+
+    .row .n {
+      font-size: .7rem;
+      letter-spacing: .12em;
+      color: var(--muted);
+      transition: color .22s var(--ease);
+    }
+
+    .row .t {
+      font-size: clamp(1rem, 2.2vw, 1.45rem);
+      font-weight: 500;
+      letter-spacing: -.015em;
+    }
+
+    .row .m {
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--muted);
+      transition: color .22s var(--ease);
+    }
+
+    .row:hover {
+      background: var(--red);
+      color: #fff;
+      padding-left: 1.4rem;
+    }
+
+    .row:hover .n,
+    .row:hover .m { color: rgba(255, 255, 255, .8); }
+
+    /* ============================================================
+       SKILLS
+       ============================================================ */
+    .skills {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: clamp(1.2rem, 3vw, 2.2rem);
+    }
+
+    .skill {
+      border-top: 1px solid var(--ink);
+      padding-top: .8rem;
+    }
+
+    .skill b {
+      display: block;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--red);
+      margin-bottom: .55rem;
+    }
+
+    .skill p {
+      font-size: .95rem;
+      line-height: 1.55;
+      color: var(--body);
+    }
+
+    /* ============================================================
+       FAQ
+       ============================================================ */
+    .faq { border-bottom: 1px solid var(--line); }
+    .faq details { border-top: 1px solid var(--line); }
+
+    .faq summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: clamp(.95rem, 2vw, 1.25rem) .7rem;
+      cursor: pointer;
+      list-style: none;
+      font-size: clamp(1rem, 2.2vw, 1.35rem);
+      font-weight: 500;
+      letter-spacing: -.015em;
+      transition: color .2s var(--ease), padding-left .2s var(--ease);
+    }
+
+    .faq summary::-webkit-details-marker { display: none; }
+
+    .faq summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      font-size: 1.35rem;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--red);
+      transition: transform .25s var(--ease);
+    }
+
+    .faq details[open] summary::after { transform: rotate(45deg); }
+
+    .faq summary:hover,
+    .faq summary:focus-visible {
+      color: var(--red);
+      padding-left: 1.2rem;
+      outline: none;
+    }
+
+    .faq .answer {
+      max-width: 64ch;
+      padding: 0 .7rem clamp(1.1rem, 2.4vw, 1.5rem);
+      font-size: .98rem;
+      line-height: 1.65;
+      color: var(--body);
+    }
+
+    /* ============================================================
+       CONTACT / FOOTER
+       ============================================================ */
+    .contact-title {
+      font-size: clamp(2.4rem, 8vw, 6rem);
+      line-height: .92;
+      letter-spacing: -.045em;
+      font-weight: 700;
+      max-width: 14ch;
+    }
+
+    .contact-title .accent { color: var(--red); }
+
+    .email {
+      display: inline-block;
+      margin-top: clamp(1.6rem, 4vw, 2.6rem);
+      font-size: clamp(1rem, 2.2vw, 1.35rem);
+      padding-bottom: .3rem;
+      border-bottom: 1px solid var(--line);
+      transition: color .22s var(--ease), border-color .22s var(--ease);
+    }
+
+    .email:hover,
+    .email:focus-visible {
+      color: var(--red);
+      border-color: var(--red);
+      outline: none;
+    }
+
+    .contact-note {
+      margin-top: 1.2rem;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--muted);
+    }
+
+    .foot {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: clamp(3rem, 8vw, 5rem);
+      padding: 1.3rem 0 2rem;
+      border-top: 1px solid var(--line);
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       MODAL
+       ============================================================ */
+    dialog {
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--ink);
+      padding: 0;
+      max-width: 550px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .08);
+      outline: none;
+    }
+
+    dialog::backdrop {
+      background: rgba(244, 243, 239, .85);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-title {
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: var(--muted);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0;
+      transition: color .2s var(--ease);
+    }
+
+    .modal-close:hover { color: var(--red); }
+
+    .modal-body { padding: 2rem 1.5rem; }
+
+    .modal-body h3 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -.025em;
+      margin-bottom: 1rem;
+    }
+
+    .modal-body p {
+      font-size: .98rem;
+      line-height: 1.62;
+      color: var(--body);
+      margin-bottom: 1rem;
+    }
+
+    .modal-body p:last-child { margin-bottom: 0; }
+
+    /* ============================================================
+       REVEAL
+       ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .8s var(--ease), transform .8s var(--ease);
+      transition-delay: calc(var(--i, 0) * 70ms);
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    @keyframes fade { to { opacity: 1; } }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 760px) {
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: .45rem 1rem;
+      }
+
+      .topbar .center { display: none; }
+
+      .topbar nav {
+        justify-self: auto;
+        flex-wrap: wrap;
+        gap: .35rem 1rem;
+        font-size: .64rem;
+        letter-spacing: .12em;
+      }
+
+      .hero-meta { grid-template-columns: 1fr 1fr; }
+      .cell:nth-child(2n) { padding-right: 0; }
+
+      .row { grid-template-columns: 2.6rem 1fr; }
+      .row .m { display: none; }
+
+      .criteria li { grid-template-columns: 2.6rem 1fr; }
+    }
+
+    /* ============================================================
+       REDUCED MOTION
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+
+      .eyebrow,
+      .hero-meta { opacity: 1; }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       TOP BAR
+       ============================================================ -->
+  <header class="topbar">
+    <button class="brand clickable" data-modal="brand">
+      Ayan <span>&</span> Friends
+    </button>
+
+    <button class="center clickable" data-modal="project">
+      ICT — School Project
+    </button>
+
+    <nav>
+      <button class="clickable" data-modal="about">About</button>
+      <button class="clickable" data-modal="brief">Brief</button>
+      <button class="clickable" data-modal="work">Work</button>
+      <button class="clickable" data-modal="skills">Skills</button>
+      <button class="clickable" data-modal="faq">FAQ</button>
+      <button class="clickable" data-modal="contact">Contact</button>
+    </nav>
+  </header>
+
+  <main class="wrap" id="top">
+
+    <!-- ============================================================
+         01 — HERO
+         ============================================================ -->
+    <section class="hero">
+      <p class="eyebrow">01 — Introduction</p>
+
+      <h1>
+        <span>Ayan</span>
+        <span>and <span class="accent">Friends</span></span>
+      </h1>
+
+      <dl class="hero-meta">
+        <div class="cell">
+          <dt>Subject</dt>
+          <dd>ICT</dd>
+        </div>
+        <div class="cell">
+          <dt>Type</dt>
+          <dd>School project</dd>
+        </div>
+        <div class="cell">
+          <dt>Built with</dt>
+          <dd>HTML &amp; CSS</dd>
+        </div>
+        <div class="cell">
+          <dt>Target</dt>
+          <dd class="red">50 / 50</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- ============================================================
+         02 — ABOUT
+         ============================================================ -->
+    <section class="section" id="about">
+      <div class="section-head">
+        <p class="label"><b>02</b> About</p>
+        <p class="section-note">The short version</p>
+      </div>
+
+      <h2 class="statement reveal">
+        A school project that actually <span class="accent">works</span>.
+      </h2>
+
+      <div class="about-grid">
+        <p class="reveal" style="--i:1">
+          This is the ICT coursework site. It was designed, written and built
+          by Ayan and Friends for one purpose: to complete the assignment properly.
+        </p>
+        <p class="reveal" style="--i:2">
+          Every part is written by hand in <strong>HTML, CSS and a little JavaScript</strong> —
+          no frameworks, no page builders, no downloaded templates — and it's hosted
+          on GitHub Pages.
+        </p>
+        <p class="reveal" style="--i:3">
+          The Swiss-style layout was chosen on purpose. A strict grid, one accent
+          colour, and type doing most of the work means nothing can hide: if the
+          content is weak, the page shows it.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         03 — BRIEF
+         ============================================================ -->
+    <section class="section" id="brief">
+      <div class="section-head">
+        <p class="label"><b>03</b> Brief</p>
+        <p class="section-note">What the assignment asked for</p>
+      </div>
+
+      <ol class="criteria">
+        <li class="reveal" style="--i:0">
+          <b>01</b>
+          <div><strong>A working website.</strong> It has to load, link properly, and be usable on a phone as well as a laptop.</div>
+        </li>
+        <li class="reveal" style="--i:1">
+          <b>02</b>
+          <div><strong>Original code.</strong> Written by hand — no page builders and no downloaded templates.</div>
+        </li>
+        <li class="reveal" style="--i:2">
+          <b>03</b>
+          <div><strong>A clear purpose.</strong> Someone should understand what the site is for within the first screen.</div>
+        </li>
+        <li class="reveal" style="--i:3">
+          <b>04</b>
+          <div><strong>Evidence of planning.</strong> Research, a plan, and notes showing how the work was put together.</div>
+        </li>
+        <li class="reveal" style="--i:4">
+          <b>05</b>
+          <div><strong>Something we can explain.</strong> Every part has to be defendable out loud, not just look right.</div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============================================================
+         04 — WORK
+         ============================================================ -->
+    <section class="section" id="work">
+      <div class="section-head">
+        <p class="label"><b>04</b> Work</p>
+        <p class="section-note">Four things we made</p>
+      </div>
+
+      <div class="work">
+        <div class="row reveal" style="--i:0">
+          <span class="n">01</span>
+          <span class="t">This website</span>
+          <span class="m">HTML / CSS — Live</span>
+        </div>
+        <div class="row reveal" style="--i:1">
+          <span class="n">02</span>
+          <span class="t">Project plan</span>
+          <span class="m">Planning — Complete</span>
+        </div>
+        <div class="row reveal" style="--i:2">
+          <span class="n">03</span>
+          <span class="t">Research notes</span>
+          <span class="m">Research — Complete</span>
+        </div>
+        <div class="row reveal" style="--i:3">
+          <span class="n">04</span>
+          <span class="t">Quiz game</span>
+          <span class="m">Coding — In progress</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         05 — SKILLS
+         ============================================================ -->
+    <section class="section" id="skills">
+      <div class="section-head">
+        <p class="label"><b>05</b> Skills</p>
+        <p class="section-note">What we used</p>
+      </div>
+
+      <div class="skills">
+        <div class="skill reveal" style="--i:0">
+          <b>HTML &amp; CSS</b>
+          <p>Structure and styling written by hand, kept short enough to read and explain.</p>
+        </div>
+        <div class="skill reveal" style="--i:1">
+          <b>Planning</b>
+          <p>A simple brief, a task list, and dates we actually stuck to.</p>
+        </div>
+        <div class="skill reveal" style="--i:2">
+          <b>Research</b>
+          <p>Finding sources, checking them, and writing down where each fact came from.</p>
+        </div>
+        <div class="skill reveal" style="--i:3">
+          <b>Teamwork</b>
+          <p>Splitting the work, reviewing each other's parts, and finishing on time.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         06 — FAQ
+         ============================================================ -->
+    <section class="section" id="faq">
+      <div class="section-head">
+        <p class="label"><b>06</b> FAQ</p>
+        <p class="section-note">Click a question to read the answer</p>
+      </div>
+
+      <div class="faq">
+        <details class="reveal" style="--i:0">
+          <summary>What is this site for?</summary>
+          <div class="answer">
+            It's the coursework project for ICT. The site is both the deliverable
+            and the documentation for how it was made.
+          </div>
+        </details>
+
+        <details class="reveal" style="--i:1">
+          <summary>Why does it look so plain?</summary>
+          <div class="answer">
+            The layout follows the Swiss style: a strict grid, one accent colour, and
+            strong type instead of decoration. It's a deliberate choice, not a lack of
+            design.
+          </div>
+        </details>
+
+        <details class="reveal" style="--i:2">
+          <summary>Can I read the code?</summary>
+          <div class="answer">
+            Yes. The whole project is on GitHub (linked in the footer), and the page
+            itself is a single HTML file, so nothing is hidden behind a build step.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         07 — CONTACT
+         ============================================================ -->
+    <footer class="section" id="contact">
+      <div class="section-head">
+        <p class="label"><b>07</b> Contact</p>
+        <p class="section-note">Feedback welcome</p>
+      </div>
+
+      <h2 class="contact-title reveal">
+        Questions, marks, or <span class="accent">both</span>.
+      </h2>
+
+      <a class="email reveal" style="--i:1" href="mailto:hello@ayanandfriends.example">
+        hello@ayanandfriends.example
+      </a>
+
+      <p class="contact-note reveal" style="--i:2">
+        ICT — School project · 2025
+      </p>
+
+      <div class="foot">
+        <span>© 2025 Ayan and Friends</span>
+        <span>Built with HTML &amp; CSS</span>
+        <span>Hosted on GitHub Pages</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ============================================================
+       MODAL
+       ============================================================ -->
+  <dialog id="info-modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Information</span>
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </dialog>
+
+  <script>
+    /* ============================================================
+       SCROLL REVEAL
+       ============================================================ */
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    /* ============================================================
+       MODAL CONTENT
+       ============================================================ */
+    const content = {
+      brand: {
+        title: "Ayan & Friends",
+        html: `
+          <h3>Ayan &amp; Friends</h3>
+          <p>An independent student team focused on clean code and clear design. We build things for the web.</p>
+          <p>This site is our main submission for the ICT coursework.</p>
+        `
+      },
+      project: {
+        title: "ICT — School Project",
+        html: `
+          <h3>ICT Coursework</h3>
+          <p>Coursework submission. Built with HTML, CSS, and vanilla JavaScript. No frameworks, no page builders.</p>
+          <p>Hosted on GitHub Pages.</p>
+        `
+      },
+      about: {
+        title: "About",
+        html: `
+          <h3>About the Project</h3>
+          <p>We designed and built this site by hand for one purpose: to complete the assignment properly.</p>
+          <p>Every part is written from scratch. The Swiss-style layout was chosen to keep the focus entirely on the content — a strict grid, one accent colour, and strong typography.</p>
+        `
+      },
+      brief: {
+        title: "The Brief",
+        html: `
+          <h3>What the assignment asked for</h3>
+          <p><strong>1. A working website.</strong> It has to load, link properly, and work on phones.</p>
+          <p><strong>2. Original code.</strong> No page builders, no templates.</p>
+          <p><strong>3. A clear purpose.</strong> The user should understand the site immediately.</p>
+          <p><strong>4. Evidence of planning.</strong> Research, a plan, and notes on how it was made.</p>
+          <p><strong>5. Explainable.</strong> We have to be able to explain every part out loud.</p>
+        `
+      },
+      work: {
+        title: "Work",
+        html: `
+          <h3>Work</h3>
+          <p>Four things we made for this project:</p>
+          <p><strong>01 — This website.</strong> HTML / CSS. Live on GitHub Pages.</p>
+          <p><strong>02 — Project plan.</strong> Complete.</p>
+          <p><strong>03 — Research notes.</strong> Complete.</p>
+          <p><strong>04 — Quiz game.</strong> Coding in progress.</p>
+        `
+      },
+      skills: {
+        title: "Skills",
+        html: `
+          <h3>Skills</h3>
+          <p><strong>HTML &amp; CSS.</strong> Structure and styling written by hand, kept short enough to read and explain.</p>
+          <p><strong>Planning.</strong> A simple brief, a task list, and dates we actually stuck to.</p>
+          <p><strong>Research.</strong> Finding sources, checking them, and writing down where each fact came from.</p>
+          <p><strong>Teamwork.</strong> Splitting the work, reviewing each other's parts, and finishing on time.</p>
+        `
+      },
+      faq: {
+        title: "FAQ",
+        html: `
+          <h3>FAQ</h3>
+          <p><strong>What is this site for?</strong><br>It's the coursework project for ICT.</p>
+          <p><strong>Why does it look so plain?</strong><br>It follows the Swiss style — a deliberate design choice.</p>
+          <p><strong>Can I read the code?</strong><br>Yes, it's all on GitHub.</p>
+        `
+      },
+      contact: {
+        title: "Contact",
+        html: `
+          <h3>Contact</h3>
+          <p>For feedback, marks, or anything else:</p>
+          <p><a href="mailto:hello@ayanandfriends.example" style="border-bottom: 1px solid var(--line); padding-bottom: 2px;">hello@ayanandfriends.example</a></p>
+        `
+      }
+    };
+
+    /* ============================================================
+       MODAL LOGIC
+       ============================================================ */
+    const modal = document.getElementById('info-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeBtn = document.getElementById('modal-close');
+
+    document.querySelectorAll('.clickable').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const key = btn.dataset.modal;
+        if (content[key]) {
+          modalTitle.textContent = content[key].title;
+          modalBody.innerHTML = content[key].html;
+          modal.showModal();
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', () => modal.close());
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.close();
+    });
+  </script>
+
+</body>
+</html>
